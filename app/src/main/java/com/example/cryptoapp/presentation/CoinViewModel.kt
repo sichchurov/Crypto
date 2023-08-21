@@ -4,10 +4,10 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.example.cryptoapp.api.ApiFactory
-import com.example.cryptoapp.database.AppDatabase
-import com.example.cryptoapp.pojo.Coin
-import com.example.cryptoapp.pojo.CoinJson
+import com.example.cryptoapp.data.database.AppDatabase
+import com.example.cryptoapp.data.database.CoinDbModel
+import com.example.cryptoapp.data.network.model.CoinJsonDto
+import com.example.cryptoapp.data.network.ApiFactory
 import com.google.gson.Gson
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -18,10 +18,10 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val db = AppDatabase.getInstance(application)
     private val compositeDisposable = CompositeDisposable()
 
-    val priceList = db.coinPriceInfoDao().getPriceList()
+    val priceList = db.coinPriceInfoDao().getCoinList()
 
-    fun getDetailInfo(fSym: String): LiveData<Coin> {
-        return db.coinPriceInfoDao().getPriceInfoAboutCoin(fSym)
+    fun getDetailInfo(fSym: String): LiveData<CoinDbModel> {
+        return db.coinPriceInfoDao().getInfoAboutCoin(fSym)
     }
 
     init {
@@ -30,7 +30,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun loadData() {
         val disposable = ApiFactory.apiService.getTopCoinsInfo(limit = 50)
-            .map { it.data?.map { it.coinItemName?.name }?.joinToString(",") }
+            .map { it.names?.map { it.coinItemNameDto?.name }?.joinToString(",") }
             .flatMap { ApiFactory.apiService.getFullPriceList(fSyms = it) }
             .map { getPriceListFromRawData(it) }
             .delaySubscription(10, TimeUnit.SECONDS)
@@ -38,7 +38,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
             .retry()
             .subscribeOn(Schedulers.io())
             .subscribe({
-                db.coinPriceInfoDao().insertPriceList(it)
+                db.coinPriceInfoDao().insertCoinList(it)
                 Log.d("TEST_OF_LOADING_DATA", "Success: $it")
             }, {
                 Log.d("TEST_OF_LOADING_DATA", "Failure: ${it.message}")
@@ -47,10 +47,10 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun getPriceListFromRawData(
-        coinJson: CoinJson
-    ): List<Coin> {
-        val result = ArrayList<Coin>()
-        val jsonObject = coinJson.coinPriceInfoJsonObject ?: return result
+        coinJsonDto: CoinJsonDto
+    ): List<CoinDbModel> {
+        val result = ArrayList<CoinDbModel>()
+        val jsonObject = coinJsonDto.jsonObject ?: return result
         val coinKeySet = jsonObject.keySet()
         for (coinKey in coinKeySet) {
             val currencyJson = jsonObject.getAsJsonObject(coinKey)
@@ -58,7 +58,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
             for (currencyKey in currencyKeySet) {
                 val priceInfo = Gson().fromJson(
                     currencyJson.getAsJsonObject(currencyKey),
-                    Coin::class.java
+                    CoinDbModel::class.java
                 )
                 result.add(priceInfo)
             }

@@ -1,9 +1,9 @@
-package com.example.cryptoapp.pojo
+package com.example.cryptoapp.data.network.model
 
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 
-data class CoinJson (
+data class CoinJsonDto (
     @SerializedName("RAW")
-    val coinPriceInfoJsonObject: JsonObject? = null
+    val jsonObject: JsonObject? = null
 )
