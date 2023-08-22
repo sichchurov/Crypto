@@ -28,46 +28,9 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         loadData()
     }
 
-    private fun loadData() {
-        val disposable = ApiFactory.apiService.getTopCoinsInfo(limit = 50)
-            .map { it.names?.map { it.coinItemNameDto?.name }?.joinToString(",") }
-            .flatMap { ApiFactory.apiService.getFullPriceList(fSyms = it) }
-            .map { getPriceListFromRawData(it) }
-            .delaySubscription(10, TimeUnit.SECONDS)
-            .repeat()
-            .retry()
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                db.coinPriceInfoDao().insertCoinList(it)
-                Log.d("TEST_OF_LOADING_DATA", "Success: $it")
-            }, {
-                Log.d("TEST_OF_LOADING_DATA", "Failure: ${it.message}")
-            })
-        compositeDisposable.add(disposable)
-    }
 
-    private fun getPriceListFromRawData(
-        coinJsonDto: CoinJsonDto
-    ): List<CoinDbModel> {
-        val result = ArrayList<CoinDbModel>()
-        val jsonObject = coinJsonDto.jsonObject ?: return result
-        val coinKeySet = jsonObject.keySet()
-        for (coinKey in coinKeySet) {
-            val currencyJson = jsonObject.getAsJsonObject(coinKey)
-            val currencyKeySet = currencyJson.keySet()
-            for (currencyKey in currencyKeySet) {
-                val priceInfo = Gson().fromJson(
-                    currencyJson.getAsJsonObject(currencyKey),
-                    CoinDbModel::class.java
-                )
-                result.add(priceInfo)
-            }
-        }
-        return result
-    }
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.dispose()
     }
 }
