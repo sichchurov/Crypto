@@ -2,7 +2,9 @@ package com.example.cryptoapp.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.example.cryptoapp.R
 import com.example.cryptoapp.databinding.ActivityCoinListBinding
 import com.example.cryptoapp.domain.entities.Coin
 import com.example.cryptoapp.presentation.adapters.CoinInfoAdapter
@@ -38,14 +40,35 @@ class CoinListActivity : AppCompatActivity() {
         }
     }
 
+    private fun isOnePaneMode() = binding.fragmentContainerView == null
+
     private fun coinClickListener() {
         coinAdapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
             override fun onCoinClick(coin: Coin) {
-                val intent = CoinDetailActivity.newIntent(
-                    this@CoinListActivity,
-                    coin.fromSymbol
-                )
-                startActivity(intent)
+                if (isOnePaneMode()) {
+                    startActivityDetail(coin.fromSymbol)
+                } else {
+                    startFragmentDetail(coin.fromSymbol)
+                }
+            }
+        }
+    }
+
+    private fun startActivityDetail(fromSymbol: String) {
+        startActivity(
+            CoinDetailActivity.newIntent(
+                this@CoinListActivity,
+                fromSymbol
+            )
+        )
+    }
+
+    private fun startFragmentDetail(fromSymbol: String) {
+        supportFragmentManager.apply {
+            popBackStack()
+            commit {
+                addToBackStack(null)
+                replace(R.id.fragment_container_view, CoinDetailFragment.newInstance(fromSymbol))
             }
         }
     }

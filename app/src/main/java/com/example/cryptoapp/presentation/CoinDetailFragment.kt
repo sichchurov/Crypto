@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso
 class CoinDetailFragment : Fragment() {
 
     private val symbol by lazy {
-        requireArguments().getString(EXTRA_KEY) ?: EMPTY_SYMBOL
+        requireArguments().getString(EXTRA_KEY, EMPTY_SYMBOL)
     }
 
     private val viewModel by lazy {
