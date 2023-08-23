@@ -23,6 +23,22 @@ class CoinListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        initRecyclerView()
+        coinClickListener()
+    }
+
+    private fun initRecyclerView() {
+        binding.rvCoinPriceList.apply {
+            adapter = coinAdapter
+            itemAnimator = null
+        }
+
+        viewModel.coinList.observe(this) {
+            coinAdapter.submitList(it)
+        }
+    }
+
+    private fun coinClickListener() {
         coinAdapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
             override fun onCoinClick(coin: Coin) {
                 val intent = CoinDetailActivity.newIntent(
@@ -31,11 +47,6 @@ class CoinListActivity : AppCompatActivity() {
                 )
                 startActivity(intent)
             }
-        }
-        binding.rvCoinPriceList.adapter = coinAdapter
-
-        viewModel.coinList.observe(this@CoinListActivity) {
-            coinAdapter.coinInfoList = it
         }
     }
 }
