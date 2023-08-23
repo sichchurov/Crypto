@@ -3,10 +3,9 @@ package com.example.cryptoapp.data.database
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "coin_list")
+@Entity(tableName = "full_price_list")
 data class CoinDbModel(
-    @PrimaryKey
-    val fromSymbol: String,
+    @PrimaryKey val fromSymbol: String,
     val toSymbol: String?,
     val price: String?,
     val lastUpdate: Long?,
@@ -14,5 +13,4 @@ data class CoinDbModel(
     val lowDay: String?,
     val lastMarket: String?,
     val imageUrl: String?
-
 )

@@ -1,36 +1,30 @@
 package com.example.cryptoapp.presentation
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import com.example.cryptoapp.data.database.AppDatabase
-import com.example.cryptoapp.data.database.CoinDbModel
-import com.example.cryptoapp.data.network.model.CoinJsonDto
-import com.example.cryptoapp.data.network.ApiFactory
-import com.google.gson.Gson
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import androidx.lifecycle.viewModelScope
+import com.example.cryptoapp.data.repository.CoinRepositoryImpl
+import com.example.cryptoapp.domain.usecases.GetCoinDetailUseCase
+import com.example.cryptoapp.domain.usecases.GetCoinListUseCase
+import com.example.cryptoapp.domain.usecases.LoadDataUseCase
+import kotlinx.coroutines.launch
 
-class CoinViewModel(application: Application) : AndroidViewModel(application) {
+class CoinViewModel(
+    application: Application
+) : AndroidViewModel(application) {
 
-    private val db = AppDatabase.getInstance(application)
-    private val compositeDisposable = CompositeDisposable()
+    private val repositoryImpl = CoinRepositoryImpl(application)
+    private val getCoinListUseCase = GetCoinListUseCase(repositoryImpl)
+    private val getCoinDetailUseCase = GetCoinDetailUseCase(repositoryImpl)
+    private val loadDataUseCase = LoadDataUseCase(repositoryImpl)
 
-    val priceList = db.coinPriceInfoDao().getCoinList()
+    val coinList = getCoinListUseCase()
 
-    fun getDetailInfo(fSym: String): LiveData<CoinDbModel> {
-        return db.coinPriceInfoDao().getInfoAboutCoin(fSym)
-    }
+    fun getDetailInfo(fSym: String) = getCoinDetailUseCase(fSym)
 
     init {
-        loadData()
-    }
-
-
-
-    override fun onCleared() {
-        super.onCleared()
+        viewModelScope.launch {
+            loadDataUseCase()
+        }
     }
 }
