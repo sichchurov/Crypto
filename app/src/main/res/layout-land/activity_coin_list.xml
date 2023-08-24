@@ -29,6 +29,7 @@
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/pane_divider"
-        tools:layout="@layout/fragment_coin_detail" />
+        tools:layout="@layout/fragment_coin_detail"
+        tools:ignore="InconsistentLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
