@@ -9,7 +9,8 @@ import com.example.cryptoapp.databinding.ItemCoinBinding
 import com.example.cryptoapp.domain.entities.Coin
 import com.squareup.picasso.Picasso
 
-class CoinInfoAdapter(private val context: Context) : ListAdapter<Coin, CoinViewHolder>(CoinDiffUtilCallback()) {
+class CoinInfoAdapter (private val context: Context) :
+    ListAdapter<Coin, CoinViewHolder>(CoinDiffUtilCallback()) {
 
     var onCoinClickListener: OnCoinClickListener? = null
 

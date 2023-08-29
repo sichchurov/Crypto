@@ -1,13 +1,16 @@
 package com.example.cryptoapp.presentation
 
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import androidx.lifecycle.ViewModelProvider
+import com.example.cryptoapp.CoinApplication
 import com.example.cryptoapp.R
 import com.example.cryptoapp.databinding.ActivityCoinListBinding
 import com.example.cryptoapp.domain.entities.Coin
 import com.example.cryptoapp.presentation.adapters.CoinInfoAdapter
+import javax.inject.Inject
 
 class CoinListActivity : AppCompatActivity() {
 
@@ -15,18 +18,28 @@ class CoinListActivity : AppCompatActivity() {
         ActivityCoinListBinding.inflate(layoutInflater)
     }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[CoinViewModel::class.java]
+    private val appComponent by lazy {
+        (application as CoinApplication).appComponent.activityComponent().create()
     }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel: CoinViewModel by viewModels { viewModelFactory }
 
     private val coinAdapter = CoinInfoAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         initRecyclerView()
         coinClickListener()
+
+        Log.d("TAG", "$this")
     }
 
     private fun initRecyclerView() {

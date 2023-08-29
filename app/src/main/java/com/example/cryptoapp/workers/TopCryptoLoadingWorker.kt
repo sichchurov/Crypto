@@ -16,7 +16,7 @@ class TopCryptoLoadingWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     private val mapper: CoinMapper = CoinMapper()
-    private val coinDao = AppDatabase.getInstance(context).coinPriceInfoDao()
+    private val coinDao = AppDatabase.getInstance(context).coinDao()
     private val coinApiService = ApiFactory.apiService
     override suspend fun doWork(): Result {
         while (true) {

@@ -11,13 +11,15 @@ import com.example.cryptoapp.domain.entities.Coin
 import com.example.cryptoapp.domain.repository.CoinRepository
 import com.example.cryptoapp.workers.TopCryptoLoadingWorker.Companion.WORKER_NAME
 import com.example.cryptoapp.workers.TopCryptoLoadingWorker.Companion.makeRequest
+import javax.inject.Inject
 
-class CoinRepositoryImpl(
+class CoinRepositoryImpl @Inject constructor(
     private val application: Application,
+    private val mapper: CoinMapper
 ) : CoinRepository {
 
-    private val mapper: CoinMapper = CoinMapper()
-    private val coinDao = AppDatabase.getInstance(application).coinPriceInfoDao()
+
+    private val coinDao = AppDatabase.getInstance(application).coinDao()
 
     override fun getCoinList(): LiveData<List<Coin>> {
         return coinDao.getCoinList().map { dbModelList ->
