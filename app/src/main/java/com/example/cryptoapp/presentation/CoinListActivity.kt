@@ -1,11 +1,9 @@
 package com.example.cryptoapp.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.example.cryptoapp.CoinApplication
 import com.example.cryptoapp.R
 import com.example.cryptoapp.databinding.ActivityCoinListBinding
 import com.example.cryptoapp.domain.entities.Coin
@@ -38,8 +36,6 @@ class CoinListActivity : AppCompatActivity() {
 
         initRecyclerView()
         coinClickListener()
-
-        Log.d("TAG", "$this")
     }
 
     private fun initRecyclerView() {

@@ -9,5 +9,5 @@ import dagger.Module
 interface DataModule {
 
     @Binds
-    fun bindLocalDataSource(impl: CoinRepositoryImpl): CoinRepository
+    fun bindCoinRepository(impl: CoinRepositoryImpl): CoinRepository
 }

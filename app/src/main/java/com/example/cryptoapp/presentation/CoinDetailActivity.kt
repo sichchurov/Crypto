@@ -3,10 +3,8 @@ package com.example.cryptoapp.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.example.cryptoapp.CoinApplication
 import com.example.cryptoapp.R
 import com.example.cryptoapp.databinding.ActivityCoinDetailBinding
 
@@ -16,18 +14,9 @@ class CoinDetailActivity : AppCompatActivity() {
         ActivityCoinDetailBinding.inflate(layoutInflater)
     }
 
-    private val appComponent by lazy {
-        (application as CoinApplication).appComponent.activityComponent().create()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        appComponent.inject(this)
-
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        Log.d("TAG", "$this")
 
         if (!intent.hasExtra(EXTRA_FROM_SYMBOL)) {
             finish()
