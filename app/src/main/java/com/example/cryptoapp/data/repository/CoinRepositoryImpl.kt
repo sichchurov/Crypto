@@ -34,7 +34,6 @@ class CoinRepositoryImpl @Inject constructor(
     }
 
     override fun loadData() {
-
         WorkManager.getInstance(application)
             .enqueueUniqueWork(
                 WORKER_NAME,

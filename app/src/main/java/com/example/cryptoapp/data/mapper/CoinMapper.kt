@@ -41,7 +41,7 @@ class CoinMapper @Inject constructor() {
         )
     }
 
-    fun mapCoinNamesToString(namesListDto: CoinNamesListDto):String {
+    fun mapCoinNamesToString(namesListDto: CoinNamesListDto): String {
         return namesListDto.names?.map {
             it.coinItemName?.name
         }?.joinToString(",") ?: EMPTY_STRING
